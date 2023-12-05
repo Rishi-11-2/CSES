@@ -9,32 +9,32 @@ signed main()
     cout.setf(ios::fixed);
     cout.precision(10);
     srand(time(NULL));
+    
         solve();
 }
 void solve()
 {
-    int n;
+    long long n;
     cin>>n;
-    int arr[n];
-    for(int i=0;i<n;i++)
-    cin>>arr[i];
-    int sum1=0;
-    int sum2=0;
-    function<int(int,int,int)>f=[&](int i,int j,int flag)->int{
-        if(i==j)
-        {
-            return arr[i];
-        }
-        int x1=f(i+1,j,1-flag)+arr[i];
-        int x2=f(i,j-1,1-flag)+arr[j];
-        cout<<i<<" "<<j<<" "<<x1<<" "<<x2<<endl;
-        if(flag==0)
-          c=1;
-        else
-          c=-1;
-        return max()
+    long long arr[n];
+    long long s=0;
+    for(long long i=0;i<n;i++)
+    {
+        cin>>arr[i];
+        s+=arr[i];
+    }
+    vector<vector<long long>>dp(n+1,vector<long long>(n+1,-1));
+    function<long long(long long,long long,long long)>f=[&](long long l,long long r,long long p)->long long{
+
+        if(l>r)
+        return 0;
+       if(dp[l][r]!=-1)
+       return dp[l][r];
+       long long x=arr[l]-f(l+1,r,1-p);
+       long long y=arr[r]-f(l,r-1,1-p);
+       return dp[l][r]=max(x,y);
     };
-    int x=f(0,n-1,0);
-    cout<<x<<endl;
-    cout<<sum1<<" "<<sum2<<endl;
+
+    long long x=f(0,n-1,0);
+    cout<<(s+x)/2<<endl;
 }
