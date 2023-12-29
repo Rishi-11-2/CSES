@@ -19,40 +19,41 @@ signed main()
     cin.tie(NULL);
     cout.setf(ios::fixed);
     cout.precision(10);
-        solve();
+    long long t;
+    solve();
 }
 void solve()
 {
-    long long n,a,b;
-    cin>>n>>a>>b;
-
+    long long n,k;
+    cin>>n>>k;
     long long arr[n];
     for(long long i=0;i<n;i++)
     cin>>arr[i];
     
-    vector<long long>prefix(n,0);
+    pbds s;
 
-    multiset<long long>s;
-
-    prefix[0]=arr[0];
-    for(long long i=1;i<n;i++)
+    for(long long i=0;i<k;i++)
     {
-        prefix[i]=prefix[i-1]+arr[i];
+        s.insert({arr[i],i});
     }
-    long long sum=prefix[a-1];
-    for(long long i=a;i<n;i++)
+    long long xx=k;
+    if(xx%2==0)
+    xx--;
+    auto x=*s.find_by_order(xx/2);
+    vector<long long>ans;
+    ans.push_back(x.first);
+
+    for(long long i=k;i<n;i++)
     {
-        s.insert(prefix[i-a]);
-        if(i-b>=1)
-        {
-            s.erase(s.find(prefix[i-(b+1)]));
-        }
-         if(i<(b))
-        {
-            sum=max(sum,prefix[i]);
-        }
-        sum=max(prefix[i]-*s.begin(),sum);
+        s.erase({arr[i-k],i-k});
+        s.insert({arr[i],i});
+
+        auto y=*s.find_by_order(xx/2);
+        ans.push_back(y.first);
     }
 
-    cout<<sum<<endl;
+    for(auto it:ans)
+    cout<<it<<" ";
+    
+    cout<<endl;
 }
