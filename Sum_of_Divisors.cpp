@@ -31,27 +31,59 @@ long long binpow(long long a,long long b,long long mod)
             res=(res%mod*a%mod);
         }
         a=(a%mod*a%mod)%mod;
-        b>>=1;
+        b>>=1LL;
     }
     return res;
 }
 void solve()
 {
-    long long m=(long long)(1e6);
-    long long n;
+       long long n;
     cin>>n;
     const long long mod=(long long)(1e9+7);
-
-    long long res=(n%mod*(n+1)%mod)%mod;
-    long long z=binpow(2,mod-2,mod);
-    res=(res%mod*z%mod)%mod;
+ 
     // debug(res);
-    for(long long i=1;i<=min(n,m);i++)
+    const long long modinverse2=binpow(2,mod-2,mod);
+
+    long long prev=n;
+    long long res=n;
+    long long j=n+1;
+    for(long long i=2;i*i<=n;i++)
+    {
+        j=i+1;
+        long long x=n/i;
+        long long y=(x%mod*i%mod)%mod;
+        res=(res%mod+y%mod)%mod;
+
+        /* first term : x+1  ,  last term : prev*/
+
+        long long sum=((prev%mod-x%mod+mod)%mod*(x%mod+1%mod+prev%mod)%mod)%mod;
+        sum=(sum%mod*(i-1)%mod)%mod; // it will occur (i-1) times 
+        // for 2 :  numbers from 5e11+1 to 1e12 will only occur one times
+        // so we take their sum
+        // for 3 : numbers from 3.33e11+1 to 5e11 will occur two times only 
+        // for 4 : numbers from 2.5e11 to 3.3e11 will occur three times
+        // and so on
+        sum=(sum%mod*modinverse2%mod)%mod;
+
+        res=(res%mod+sum%mod)%mod;
+
+        prev=x;
+
+    }
+
+    // 20
+    //  1 * 20
+    // 2 * 10 + (20 -> 11) * 1
+    // 3 * 6 + (10 -> 7) * 2
+    // 4 * 5 + (6 -> 6) * 3
+    // 5 will be left out for 20. 
+    // in the sum till 20 we are not considering 5 therefore we were making a mistake
+    for(long long i=j;i<=prev;i++)
     {
         long long x=(n/i);
-        x--;
         long long y=(x%mod*i%mod)%mod;
         res=(res%mod+y%mod)%mod;
     }
-    cout<<res<<endl;
+
+    cout<<res<<"\n";
 }
