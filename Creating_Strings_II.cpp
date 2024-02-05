@@ -21,48 +21,50 @@ signed main()
     cout.precision(10);
         solve();
 }
+long long binpow(long long a,long long b,long long mod)
+{
+    long long res=1;
+    while(b>0)
+    {
+        if(b&1)
+        {
+            res=(res%mod*a%mod)%mod;
+        }
+        a=(a%mod*a%mod)%mod;
+        b>>=1LL;
+    }
+    return res;
+}
 void solve()
 {
-    long long n,k;
-    cin>>n>>k;
-    long long arr[n];
-    for(long long i=0;i<n;i++)
-    cin>>arr[i];
-
-    vector<long long>ans;
-    pbds s;
-
-    for(long long i=0;i<k;i++)
+    string s;
+    cin>>s;
+    map<char,long long>mp;
+    for(char c:s)
     {
-        s.insert({arr[i],i});
-    }
-    int mid=k/2;
-    if(k%2==0)
-    mid--;
-    auto x=*(s.find_by_order(mid));
-    long long res=0;
-    for(long long i=0;i<k;i++)
-    {
-        res+=abs(arr[i]-x.first);
-    }
-    ans.push_back(res);
-
-    long long prev=x.first;
-    for(long long i=k;i<n;i++)
-    {
-        s.erase({arr[i-k],i-k});
-        s.insert({arr[i],i});
-        auto y=*s.find_by_order(mid);
-        long long z=abs(y.first-prev)+res;
-        z=z-(abs(y.first-arr[i-k]))+(abs(y.first-arr[i]));
-        // debug(z,)
-        ans.push_back(z);
-        res=z;
-        prev=y.first;
+        mp[c]++;
     }
 
-    for(auto it:ans)
-    cout<<it<<" ";
-    cout<<endl;
-
+    long long n=s.length();
+    const long long mod=(long long)(1e9+7);
+    vector<long long>fact(n+1,0);
+    vector<long long>ifact(n+1,0);
+    fact[0]=1;
+    for(long long i=1;i<=n;i++)
+    {
+        fact[i]=(fact[i-1]%mod*i%mod)%mod;
+    }
+    ifact[n]=binpow(fact[n],mod-2,mod);
+    for(long long i=n-1;i>=0;i--)
+    {
+        ifact[i]=((i+1)%mod*ifact[i+1]%mod)%mod;
+    }
+    long long res=fact[n];
+    long long product=1;
+    for(auto it:mp)
+    {
+        product=(product%mod*ifact[it.second]%mod)%mod;
+    }
+    res=(res%mod*product%mod)%mod;
+    cout<<res<<endl;
 }
