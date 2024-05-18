@@ -19,6 +19,7 @@ signed main()
     cin.tie(NULL);
     cout.setf(ios::fixed);
     cout.precision(10);
+    
         solve();
 }
 void solve()
@@ -26,57 +27,90 @@ void solve()
     long long n;
     cin>>n;
     long long arr[n];
-    long long maxm=0;
-    map<long long,long long>mp;
     for(long long i=0;i<n;i++)
-    {
-        cin>>arr[i];
-        mp[arr[i]]++;
-        maxm=max(maxm,arr[i]);
-    }
-    
+    cin>>arr[i];
+
     long long m=(long long)(1e6);
-    vector<bool>isPrime(m+1,1); 
-    isPrime[0]=isPrime[1]=0;
-    vector<long long>primes;
+    vector<long long>spf(m+1,1);
+
+    for(long long i=1;i<=m;i++)
+    spf[i]=i;
+
     for(long long i=2;i*i<=m;i++)
     {
-        if(isPrime[i])
+        if(spf[i]==i)
         {
-            primes.push_back(i);
-            for(long long j=i*i;j<=m;j+=i)
+            for(long long j=2*i;j<=m;j+=i)
             {
-                isPrime[j]=0;
+                spf[j]=min(spf[j],i);
             }
         }
     }
-    // debug(mp[1]);
-    vector<int>vis(n+1,0);
-    long long res=mp[1]*(n-mp[1]);
-    for(auto it:primes)
+
+    vector<long long>mp(m+1,0);
+    long long res=0;
+    for(long long i=0;i<n;i++)
     {
-        if(it>maxm)
-        break;
-        long long count1=0;
-        long long count2=0;
-        for(long long i=0;i<n;i++)
+        long long x=arr[i];
+
+        vector<long long>pf;
+        while(x>1)
         {
-            if(vis[i]||arr[i]==1)
-            continue;
-            if(arr[i]%it==0)
+            if(pf.empty() || spf[x]!=pf.back())
             {
-                count2++;
-                vis[i]=1;
+                pf.push_back(spf[x]);
             }
-            else
-            {
-                count1++;
-            }
+            x=x/spf[x];
         }
-        debug(it,count1,count2);
-        long long y=(count1*(count2));
-        // y/=2;
-        res+=y;
+        // for(auto it:pf)
+        // cout<<it<<" ";
+        // cout<<endl;
+        long long sz=(long long)(pf.size());
+
+
+        function<void(long long,long long)>f=[&](long long k,long long mask)->void{
+
+            if(k==sz)
+            {
+                if(mask==0)
+                return;
+                long long c=__builtin_popcount(mask);
+                long long num=1;
+                for(long long j=0;j<sz;j++)
+                {
+                    if((mask&(1<<j))!=0)
+                    {
+                        num=num*(pf[j]);
+                    }
+                }
+                // debug(i,num);
+                if(c%2)
+                {
+                    res+=mp[num];
+                    mp[num]++;
+                }
+                else
+                {
+                    res-=mp[num];
+                    mp[num]++;
+                }
+
+                return ;
+            }
+
+            f(k+1,mask);
+            long long newMask=mask|(1<<k);
+
+            f(k+1,newMask);
+
+
+
+        };
+        f(0,0);
+    
     }
+    long long tc=n*(n-1);
+    tc=tc/2LL;
+    res=tc-res;
     cout<<res<<endl;
 }
