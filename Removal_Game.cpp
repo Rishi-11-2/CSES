@@ -25,7 +25,7 @@ void solve()
     }
     vector<vector<long long>>dp(n+1,vector<long long>(n+1,-1));
     function<long long(long long,long long,long long)>f=[&](long long l,long long r,long long p)->long long{
-
+ 
         if(l>r)
         return 0;
        if(dp[l][r]!=-1)
@@ -34,7 +34,7 @@ void solve()
        long long y=arr[r]-f(l,r-1,1-p);
        return dp[l][r]=max(x,y);
     };
-
+ 
     long long x=f(0,n-1,0);
     cout<<(s+x)/2<<endl;
 }
