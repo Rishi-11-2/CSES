@@ -39,6 +39,12 @@ void solve()
     vector<long long>v;
     v.push_back(arr[0]);
 
+
+    /* normal greedy will not fail in either (increasing) or (decreasing) or (decreasing and increasing)*/
+
+    /* if the array does not fall into any of the three cases  , then we would have to consider it triplets(a,b,c) such that b>=a,c  so what happens now is that 
+    we replace the triplets (a,b,c) by a-b+c. this ensures that we reduces the local maxima encountered and we keep doing
+    that until the the arrays fall under any of three above categories */
     long long i=1;
     while(i<n)
     {
