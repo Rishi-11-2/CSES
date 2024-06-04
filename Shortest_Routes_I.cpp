@@ -28,19 +28,17 @@ void solve()
     long long n,m;
     cin>>n>>m;
 
-    vector<long long>adj[n+1];
+    vector<pair<long long,long long>>adj[n+1];
 
     for(long long i=1;i<=m;i++)
     {
-        long long x,y;
-        cin>>x>>y;
+        long long x,y,c;
+        cin>>x>>y>>c;
 
-        adj[x].push_back(y);
-        adj[y].push_back(x);
+        adj[x].push_back({y,c});
     }
     priority_queue<pair<long long,long long>,vector<pair<long long,long long>>, greater<pair<long long,long long>> >q;
     vector<long long>dist(n+1,(long long)(1e18));
-    vector<long long>parent(n+1,(long long)(-1));
     dist[1]=0;
     q.push({0,1});
     while(!q.empty())
@@ -53,36 +51,15 @@ void solve()
         continue;
         for(auto v:adj[u])
         {
-            if(dist[v]>(dist[u]+1))
+            if(dist[v.first]>(dist[u]+v.second))
             {
-                parent[v]=u;
-                dist[v]=dist[u]+1;
-                q.push({dist[v],v});
+                dist[v.first]=dist[u]+v.second;
+                q.push({dist[v.first],v.first});
             }
         }
     }
 
-    if(dist[n]==(long long)(1e18))
-    {
-        cout<<"IMPOSSIBLE"<<endl;
-    }   
-    else
-    {
-        // cout<<dist[n]<<endl;
-        vector<long long>path;
-
-        long long node=n;
-
-        while(node!=-1)
-        {
-            path.push_back(node);
-            node=parent[node];
-        }
-
-        reverse(all(path));
-        cout<<(int)(path.size())<<endl;
-        for(auto it:path)
-        cout<<it<<" ";
-        cout<<endl;
-    }
+    for(long long i=1;i<=n;i++)
+    cout<<dist[i]<<" ";
+    cout<<endl;    
 }
